@@ -23,7 +23,7 @@ jobs:
           node --input-type=commonjs <<'NODE'
           const fs = require('node:fs');
           const html = fs.readFileSync('index.html', 'utf8');
-          const scripts = [...html.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)];
+          const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
           if (scripts.length !== 1) throw new Error('Expected exactly one inline application script');
           new Function(scripts[0][1]);
           console.log('Browser JavaScript syntax OK');
