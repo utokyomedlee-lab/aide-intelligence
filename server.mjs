@@ -176,8 +176,32 @@ const server = http.createServer(async (req, res) => {
       }
       const result = await upstream.json().catch(() => ({}));
       if (!upstream.ok) {
-        const status = upstream.status === 429 ? 429 : 502;
-        return send(res, status, { error: upstream.status === 429 ? "AI 서비스 사용량 한도에 도달했습니다." : "AI 서비스 요청이 실패했습니다. 운영자가 API 설정을 확인해야 합니다." });
+        const apiError = result && typeof result.error === "object" && result.error ? result.error : {};
+        const diagnostic = {
+          status: upstream.status,
+          type: typeof apiError.type === "string" ? apiError.type : null,
+          code: typeof apiError.code === "string" ? apiError.code : null,
+          param: typeof apiError.param === "string" ? apiError.param : null,
+          message: typeof apiError.message === "string" ? apiError.message.slice(0, 700) : "No error message returned",
+          request_id: upstream.headers.get("x-request-id") || upstream.headers.get("request-id") || null
+        };
+        console.error("[openai_api_error] " + JSON.stringify(diagnostic));
+
+        let publicError = "AI 서비스 요청이 실패했습니다. Render 로그에서 openai_api_error 항목을 확인해 주세요.";
+        if (upstream.status === 401) {
+          publicError = "OpenAI API 키 인증에 실패했습니다. Render의 OPENAI_API_KEY 값과 키가 속한 프로젝트를 확인해 주세요.";
+        } else if (upstream.status === 403) {
+          publicError = "OpenAI API 키 또는 프로젝트에 요청 권한이 없습니다. 프로젝트 권한과 모델 접근 권한을 확인해 주세요.";
+        } else if (upstream.status === 404) {
+          publicError = "OpenAI API에서 모델 또는 요청 대상을 찾지 못했습니다. Render의 OPENAI_MODEL 설정을 확인해 주세요.";
+        } else if (upstream.status === 400) {
+          publicError = "OpenAI가 요청 형식을 거부했습니다. Render 로그의 openai_api_error 항목을 확인해 주세요.";
+        } else if (upstream.status === 429) {
+          publicError = diagnostic.code === "insufficient_quota" || diagnostic.code === "credit_balance_exhausted"
+            ? "OpenAI API 크레딧 또는 결제 한도가 부족합니다. API Platform의 Billing과 Usage limits를 확인해 주세요."
+            : "OpenAI API 요청 한도에 도달했습니다. 잠시 후 다시 시도하거나 API 사용량 한도를 확인해 주세요.";
+        }
+        return send(res, upstream.status === 429 ? 429 : 502, { error: publicError });
       }
       const content = extractOutputText(result);
       if (!content) return send(res, 502, { error: "AI가 비어 있는 응답을 반환했습니다." });
