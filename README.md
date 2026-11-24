@@ -6,7 +6,8 @@ Aide Intelligence는 사용자가 자연어로 고민을 설명하면 필요한 
 
 ## 저장소 파일
 
-- `index.html` — ChatGPT형 대화 인터페이스, 브라우저 대화 기록, 점수 계산 및 결과 카드
+- `index.html` — ChatGPT형 대화 화면과 UI 구조
+- `app.js` — 대화 기록·Aide 효용 계산·결과 브리핑을 처리하는 브라우저 코드
 - `server.mjs` — Node.js 서버, OpenAI Responses API 연결, 상태 점검 및 기본 요청 제한
 - `package.json` — Node.js 실행 설정
 - `render.yaml` — Render Blueprint 배포 설정
@@ -23,6 +24,10 @@ npm start
 ```
 
 브라우저에서 `http://localhost:3000`을 여세요. API 키가 없는 경우 예시값을 이용하는 데모 모드로 실행됩니다.
+
+## 자동 검증
+
+GitHub Actions가 main 브랜치의 푸시와 Pull Request마다 서버·브라우저 JavaScript 문법과 기본 HTTP 상태를 점검합니다.
 
 ## Render에 공개 배포하기
 
