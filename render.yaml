@@ -15,6 +15,6 @@ services:
       - key: NODE_ENV
         value: production
       - key: OPENAI_MODEL
-        value: gpt-6.1-sol
+        value: gpt-6.2-sol
       - key: OPENAI_API_KEY
         sync: false
