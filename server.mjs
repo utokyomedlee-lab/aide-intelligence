@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 3000);
 const API_KEY = process.env.OPENAI_API_KEY || "";
-const MODEL = process.env.OPENAI_MODEL || "gpt-6.1-sol";
+const MODEL = process.env.OPENAI_MODEL || "gpt-6.2-sol";
 const BODY_LIMIT = 48 * 1024;
 const WINDOW_MS = 10 * 60 * 1000;
 const MAX_REQUESTS = 12;
