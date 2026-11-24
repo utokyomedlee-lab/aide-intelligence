@@ -1,72 +1,71 @@
 # Aide Intelligence
 
-**A chat-first decision-support prototype powered by the Aide Mathematical Utility Model.**
+**대화형 수리과학 의사결정 AI 프로토타입**
 
-Aide Intelligence lets people describe a decision in natural language, compare 2–5 options, and review a transparent utility-score ranking with assumptions, risks, and a three-step action plan.
+Aide Intelligence는 사용자가 자연어로 고민을 설명하면 2~5개 선택지를 구성하고, Aide 효용 모델로 상대 점수를 계산해 최적 대안·비교·근거·3단계 실행계획을 대화형으로 제시합니다.
 
-> **Status:** Public prototype (v0.2.0). This is not yet a production-ready public AI service.
+<details>
+<summary>English</summary>
 
-## Get the source
+Aide Intelligence is a chat-first decision-support prototype built around the Aide Mathematical Utility Model. It proposes alternatives, explains assumptions and risks, and calculates comparative utility scores in application code.
 
-The complete v0.2.0 project is included in [aide-intelligence-v0.2.0-chat.zip](./aide-intelligence-v0.2.0-chat.zip). Download the ZIP from this repository and extract it.
+</details>
 
-The package contains:
-- `index.html` — Korean chat interface and browser-side Aide formula engine
-- `server.mjs` — Node.js web server and optional server-side OpenAI Responses API adapter
-- `package.json` — runtime script and Node.js requirement
-- `.env.example` — environment variable template
-- `.gitignore` — local secret and dependency exclusions
-- A full setup guide in the package's `README.md`
+## Current release
 
-## Run locally
+**v0.3.0 — Public preview**
 
-Requirements: Node.js 20 or newer.
+- ChatGPT-style Korean interface
+- Local browser conversation history (no user accounts or server-side chat database yet)
+- Optional server-side OpenAI Responses API integration
+- Local rule-based demo mode when no API key is configured
+- Aide formula calculated by application code
+- Basic request-size, timeout, security-header and per-IP rate controls
+- Render Blueprint deployment configuration
 
-1. Download and extract the ZIP.
-2. Open a terminal in the extracted project folder.
-3. Run:
+## Download source
 
-```bash
-npm start
-```
+[Download Aide Intelligence v0.3.0 source ZIP](./aide-intelligence-v0.3.0.zip)
 
-4. Visit http://localhost:3000.
+The archive contains the full Node.js application, browser UI, server adapter, privacy notice, environment template and setup instructions.
 
-## Operating modes
+## Deploy publicly on Render
 
-### Local demo
-Works without an API key. It uses rule-based example templates and calculates the Aide utility score. It is a demonstration mode, not a generative AI model and not a live-data service.
+The root-level `render.yaml` is configured for a Render Blueprint.
 
-### AI chat
-Set `OPENAI_API_KEY` as a **server-side environment variable** and restart the server. The default model is `gpt-6.2-sol`; override it with `OPENAI_MODEL` when needed.
+1. Create or sign in to a Render account.
+2. Connect your GitHub account to Render.
+3. In Render, choose **New → Blueprint**.
+4. Select `utokyomedlee-lab/aide-intelligence` and apply the Blueprint.
+5. Optionally set `OPENAI_API_KEY` as a secret environment variable to enable real AI responses. Without it, the service runs in local demo mode.
+6. After deployment, open the generated `onrender.com` URL and check `/healthz`.
 
-Never put an API key in `index.html`, client-side JavaScript, a committed `.env` file, or a public issue. API usage and billing are separate from ChatGPT subscriptions.
+The Blueprint uses a Render Free instance for initial testing. Free services can spin down when idle and are not intended for production reliability. See [Render free-instance limitations](https://render.com/docs/free).
 
-## The Aide utility model
+## AI configuration
 
-For each evaluation factor, the app calculates:
+The server-side default model is `gpt-6.2-sol`. Set `OPENAI_API_KEY` only in Render's Environment/Secrets settings. Never place a real key in browser code, source control, public issues, or the ZIP.
 
-```
-(alpha * ln(1 + max(0,a) * (1+w)))
------------------------------------------------- * S * A
- beta * ln(1 + max(0,b) * (1+R/100)) + 1e-5
-```
+ChatGPT subscriptions and OpenAI API billing are separate.
 
-The app applies the supplied variable bounds and rounds each factor contribution to four decimal places before summing.
+## Data and privacy
+
+- Conversation history is saved in the current browser's local storage. It is not an account-based history and does not sync across devices.
+- When AI mode is enabled, the current conversation messages are sent to the OpenAI API for response generation.
+- This app does not intentionally store conversation transcripts in an Aide-operated server database.
+- Do not enter government identifiers, passwords, bank details, confidential business information, or sensitive health data.
+- Read [the prototype privacy notice](./aide-intelligence-v0.3.0.zip) (inside the archive: `aide-intelligence-chat/PRIVACY.md`).
 
 ## Important limitations
 
-- Local demo values are illustrative template estimates, not measured big-data results.
-- AI mode can propose estimates, but those estimates are not verified facts unless supported by external evidence.
-- The prototype does not yet connect to external market, public-sector, or research databases.
-- Scores are relative model outputs, not probabilities of success or guarantees.
-- Health, legal, financial, and safety decisions require appropriate professional review.
-- Do not deploy the API-backed server publicly without adding authentication, request quotas, monitoring, and abuse protections. The included server is intended for local evaluation.
+This is an early public preview, not a production-hardened AI service. It does not yet have user sign-in, a central conversation database, external market/public-data connectors, robust bot prevention, or a full privacy-consent workflow. Basic in-memory rate limiting is not a guarantee against API abuse. Before wider public promotion, add a CAPTCHA or sign-in layer, durable per-user/global quotas, monitoring, spending alerts, a reviewed privacy policy and terms of use.
 
-## Development
+The demo's numerical values are initial estimates, not independently verified big-data results. Utility scores are relative model outputs, not probabilities or guarantees. For medical, legal, financial or safety decisions, obtain qualified professional review.
 
-This repository currently distributes the complete v0.2.0 source as a ZIP archive. See the package README for implementation notes and setup.
+## Project files
+
+The full source code is currently distributed in the v0.3.0 ZIP archive. The repository root contains this deployment configuration and project README.
 
 ## License
 
-No open-source license has been applied yet. Public visibility does not by itself grant permission to reuse, modify, or redistribute the code.
+No open-source license has been selected yet. Public visibility does not automatically grant permission to reuse, modify or redistribute the code.
