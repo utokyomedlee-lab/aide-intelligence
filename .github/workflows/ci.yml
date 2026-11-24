@@ -1,0 +1,44 @@
+name: Aide build and smoke test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check server JavaScript
+        run: node --check server.mjs
+      - name: Check browser JavaScript
+        run: |
+          node --input-type=commonjs <<'NODE'
+          const fs = require('node:fs');
+          const html = fs.readFileSync('index.html', 'utf8');
+          const scripts = [...html.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)];
+          if (scripts.length !== 1) throw new Error('Expected exactly one inline application script');
+          new Function(scripts[0][1]);
+          console.log('Browser JavaScript syntax OK');
+          NODE
+      - name: Smoke test HTTP server
+        run: |
+          PORT=3812 node server.mjs > /tmp/aide-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 20); do
+            if curl --silent --fail http://127.0.0.1:3812/healthz > /tmp/aide-health.json; then break; fi
+            sleep 1
+          done
+          cat /tmp/aide-health.json
+          grep -q '"ok":true' /tmp/aide-health.json
+          curl --silent --fail http://127.0.0.1:3812/ | grep -q 'Aide Intelligence'
+          STATUS=$(curl --silent -o /tmp/aide-api.json -w '%{http_code}' -X POST http://127.0.0.1:3812/api/chat -H 'Content-Type: application/json' -d '{"messages":[{"role":"user","content":"test"}]}')
+          test "$STATUS" = "503"
