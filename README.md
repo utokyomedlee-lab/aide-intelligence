@@ -48,7 +48,7 @@ API 키는 GitHub에 올리지 마세요. Render의 비밀 환경변수 설정�
 
 ## 운영 모드
 
-- **AI 모드:** 서버 환경변수 `OPENAI_API_KEY`가 설정되면 OpenAI Responses API를 사용합니다. 기본 모델은 `gpt-6.2-sol`이며 `OPENAI_MODEL`로 바꿀 수 있습니다.
+- **AI 모드:** 서버 환경변수 `OPENAI_API_KEY`가 설정되면 OpenAI Responses API를 사용합니다. 기본 모델은 `gpt-6.1-sol`이며 `OPENAI_MODEL`로 바꿀 수 있습니다.
 - **데모 모드:** API 키가 없으면 예시용 규칙 기반 평가값을 사용합니다. 이는 실제 생성형 AI나 실시간 시장 데이터 분석이 아닙니다.
 
 ChatGPT 구독과 API 사용료는 별도입니다.
