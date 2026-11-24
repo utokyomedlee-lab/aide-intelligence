@@ -67,7 +67,7 @@ function securityHeaders(res) {
   res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
-  res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; base-uri 'self'; form-action 'self'; frame-ancestors 'none'");
+  res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; base-uri 'self'; form-action 'self'; frame-ancestors 'none'");
 }
 
 function send(res, status, body, type = "application/json; charset=utf-8") {
@@ -126,6 +126,10 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html")) {
       const html = await readFile(path.join(HERE, "index.html"));
       return send(res, 200, html, "text/html; charset=utf-8");
+    }
+    if (req.method === "GET" && url.pathname === "/app.js") {
+      const javascript = await readFile(path.join(HERE, "app.js"));
+      return send(res, 200, javascript, "application/javascript; charset=utf-8");
     }
     if (req.method === "GET" && url.pathname === "/privacy") {
       const html = await readFile(path.join(HERE, "PRIVACY.md"), "utf8");
