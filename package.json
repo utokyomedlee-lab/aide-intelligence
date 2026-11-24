@@ -1,0 +1,14 @@
+{
+  "name": "aide-intelligence",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Chat-first decision support powered by the Aide Mathematical Utility Model",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node --check server.mjs"
+  }
+}
